@@ -29,5 +29,12 @@ function makeGuess() {
     }
 }
 
+// Add event listener for keypress
+document.getElementById("guess").addEventListener("keypress", function(event) {
+    if (event.key === "Enter") {
+        makeGuess();
+    }
+});
+
 // Start the first round
 newRound();
