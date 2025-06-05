@@ -1,6 +1,7 @@
-let bitSize = 1;
+let bitSize = 1; // Always start at 1 bit for each session
 let numberToGuess;
 let binaryNumberToGuess;
+let highScore = localStorage.getItem("highScore") || 0; // Retrieve high score from local storage
 
 function newRound() {
     numberToGuess = Math.floor(Math.random() * Math.pow(2, bitSize));
@@ -8,6 +9,7 @@ function newRound() {
     document.getElementById("prompt").innerText = `Guess the ${bitSize}-bit number in binary! (0 to ${Math.pow(2, bitSize) - 1})`;
     document.getElementById("guess").value = '';
     document.getElementById("result").innerText = '';
+    document.getElementById("highScore").innerText = `High Score: ${highScore} bits`;
 }
 
 function makeGuess() {
@@ -24,8 +26,15 @@ function makeGuess() {
         document.getElementById("result").innerText = "Lower in binary!";
     } else {
         document.getElementById("result").innerText = "Congratulations! You guessed it right in binary! 🎉";
-        bitSize *= 2;
-        newRound();
+        bitSize *= 2; // Double bit size for the next correct guess
+
+        // Update high score if the current bit size is greater
+        if (bitSize > highScore) {
+            highScore = bitSize;
+            localStorage.setItem("highScore", highScore); // Save high score to local storage
+        }
+
+        newRound(); // Start a new round
     }
 }
 
