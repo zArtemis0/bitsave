@@ -1,7 +1,8 @@
-let bitSize = 1; // Always start at 1 bit for each session
+let bitSize = 1;
 let numberToGuess;
 let binaryNumberToGuess;
-let highScore = localStorage.getItem("highScore") || 0; // Retrieve high score from local storage
+let highScore = localStorage.getItem("highScore") || 0;
+let startTime;
 
 function newRound() {
     numberToGuess = Math.floor(Math.random() * Math.pow(2, bitSize));
@@ -10,6 +11,8 @@ function newRound() {
     document.getElementById("guess").value = '';
     document.getElementById("result").innerText = '';
     document.getElementById("highScore").innerText = `High Score: ${highScore} bits`;
+    document.getElementById("timer").innerText = '';
+    startTime = Date.now();
 }
 
 function makeGuess() {
@@ -20,30 +23,28 @@ function makeGuess() {
         return;
     }
 
-    if (guess < binaryNumberToGuess) {
-        document.getElementById("result").innerText = "Higher in binary!";
-    } else if (guess > binaryNumberToGuess) {
-        document.getElementById("result").innerText = "Lower in binary!";
-    } else {
-        document.getElementById("result").innerText = "Congratulations! You guessed it right in binary! 🎉";
-        bitSize *= 2; // Double bit size for the next correct guess
+    if (guess === binaryNumberToGuess) {
+        let elapsedSeconds = ((Date.now() - startTime) / 1000).toFixed(2);
+        document.getElementById("result").innerText = `🎉 Correct! You took ${elapsedSeconds} seconds.`;
+        bitSize *= 2;
 
-        // Update high score if the current bit size is greater
         if (bitSize > highScore) {
             highScore = bitSize;
-            localStorage.setItem("highScore", highScore); // Save high score to local storage
+            localStorage.setItem("highScore", highScore);
         }
 
-        newRound(); // Start a new round
+        setTimeout(newRound, 2000);
+    } else {
+        document.getElementById("result").innerText = "Incorrect. Try again.";
     }
 }
 
-// Add event listener for keypress
+document.querySelector("button").addEventListener("click", makeGuess);
+
 document.getElementById("guess").addEventListener("keypress", function(event) {
     if (event.key === "Enter") {
-        makeGuess(); // Call makeGuess() when Enter is pressed
+        makeGuess();
     }
 });
 
-// Start the first round
 newRound();
